@@ -38,7 +38,7 @@ resource "aws_cloudformation_stack" "asg" {
     },
     "UpdatePolicy": {
         "AutoScalingScheduledAction": {
-			"IgnoreUnmodifiedGroupSizeProperties": "true"
+	"IgnoreUnmodifiedGroupSizeProperties": "true"
         },
         "AutoScalingRollingUpdate": {
         "MaxBatchSize": 4,
@@ -48,16 +48,26 @@ resource "aws_cloudformation_stack" "asg" {
         }
       }
     },
-    "ScheduledAction": {
+    "ScheduledActionIn": {
         "Type": "AWS::AutoScaling::ScheduledAction",
         "Properties": {
           "AutoScalingGroupName": {
               "Ref": "AutoScaling"
           },
           "DesiredCapacity": "2",
-          "StartTime": "2020-07-21T11:10:00Z",
-          "EndTime": "2020-08-15T11:30:00Z",
-          "Recurrence": "10 11 * * *"
+          "StartTime": "${var.scaleup_start_time}",
+          "Recurrence": "${var.scaleup_recurrence}"
+        }
+      },
+     "ScheduledActionOut": {
+        "Type": "AWS::AutoScaling::ScheduledAction",
+        "Properties": {
+          "AutoScalingGroupName": {
+              "Ref": "AutoScaling"
+          },
+          "DesiredCapacity": "1",
+          "StartTime": "${var.scaledown_start_time}",
+          "Recurrence": "${var.scaledown_recurrence}"
         }
       }
     }
